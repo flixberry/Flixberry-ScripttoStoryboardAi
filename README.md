@@ -42,10 +42,102 @@ Once Chrome exposes the API publicly, Flixberry Script to Storyboard AI will aut
 
 ---
 
+
+
+
+
+
+## 🧪 Testing Instructions
+
+Follow these steps to test Flixberry Script to Storyboard AI on your own browser:
+
+1. 🧭 Use Chrome Canary (v139–144)
+
+This app is designed for Chrome Canary, Google’s experimental browser where the Prompt API is being tested.
+If you don’t already have it:
+👉 Download Chrome Canary
+
+💡 Regular Chrome or Edge will show:
+“Chrome Prompt API not available in this browser.”
+That’s normal — only Canary supports it for now.
+
+2. ⚙️ Enable Required Browser Flags
+
+To allow experimental AI features:
+
+Open a new tab in Chrome Canary
+
+Type chrome://flags in the address bar and press Enter
+
+In the search bar, enable the following flags:
+
+🔹 prompt-api → Enable
+
+🔹 enable-experimental-web-platform-features → Enable
+
+Restart Chrome Canary
+
+These flags unlock access to Chrome’s early Prompt API, which allows AI-assisted web features like text-to-visual generation.
+
+3. 🌐 Visit the Live Demo
+
+Go to:
+👉 https://flixberry.com/scripttostoryboardai
+
+This opens the app directly in your browser — no download or setup needed.
+
+4. ✍️ Input or Paste Your Script
+
+Click inside the text box
+
+Paste or type your story, dialogue, or screenplay scene
+
+Then click “Generate Storyboard”
+
+The app will automatically transform your script into text-based storyboard panels — each representing a shot, action, or line of dialogue.
+
+5. 🔍 Observe Fallback Logic
+
+If the Prompt API isn’t available or the flags aren’t enabled, the app will display:
+
+“⚠️ Chrome Prompt API not available in this browser.”
+
+
+6. 🧩 Explore and Review
+
+Each panel shows:
+
+Scene Panel number and description
+
+Characters, actions, emotions, and dialogue
+
+Emotional tone and camera angle
+
+You can use it to plan, visualize, and review your story flow before creating visuals or animations.
+
+7. 🧠 Developer Tip
+
+If you’d like to explore or modify the source code:
+
+Visit the GitHub repo: https://github.com/flixberry/Flixberry-ScripttoStoryboardAi
+
+The repository includes:
+
+✅ Origin Trial setup for Prompt API
+
+✅ Script parsing and layout logic
+
+✅ Fallback and privacy first architecture
+
+
+---
+
+
+
 ## 🚀 How to Run Locally  
 
-1. Clone this repository  
-2. Open `index.php` in **Chrome Canary**  
+1. Clone this repository
+2. Open `index.html` in **Chrome Canary**  
 3. Paste your story or script into the text box  
 4. Click “Generate Storyboard” to view your scene breakdowns  
 
