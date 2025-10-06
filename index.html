@@ -2,16 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Script-to-Storyboard Assistant</title>
+  <title>Script to Storyboard AI</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-
-    .panel { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 6px; background: #f9f9f9; }
-
-   .panel-row { display: flex; margin: 4px 0; }
-   .panel-label { width: 120px; font-weight: bold; }
-   .panel-content { flex: 1; text-align: left; }
+  .panel { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 6px; background: #f9f9f9; }
+  .panel-row { display: flex; margin: 4px 0; }
+  .panel-label { width: 120px; font-weight: bold; }
+  .panel-content { flex: 1; text-align: left; }
   </style>
 </head>
 <body>
@@ -46,7 +43,7 @@
 
     async function createAISession() {
       if (!("LanguageModel" in self)) {
-        log("? Chrome Prompt API not available in this browser.");
+        log("⚠️ Chrome Prompt API not available in this browser.");
         return false;
       }
       session = await LanguageModel.create({
@@ -56,7 +53,7 @@
           { role: "system", content: "You are an AI assistant that converts script scenes into storyboard panels in JSON format." }
         ]
       });
-      log("? AI session created.");
+      log("✅ AI session created.");
       return true;
     }
 
@@ -67,9 +64,18 @@
         return;
       }
 
-      if (!session && !(await createAISession())) return;
+      // Disable button and show loading text
+      generateBtn.disabled = true;
+      const originalText = generateBtn.textContent;
+      generateBtn.textContent = "Generating Storyboard, please wait...";
 
-      storyboardContainer.innerHTML = "<p>Generating storyboard panels�</p>";
+      if (!session && !(await createAISession())) {
+        generateBtn.disabled = false;
+        generateBtn.textContent = originalText;
+        return;
+      }
+
+      storyboardContainer.innerHTML = "<p>Generating storyboard panels…</p>";
 
       try {
         log("Sending prompt to AI...");
@@ -96,13 +102,12 @@ Respond strictly in JSON array format.
           fullResponse += chunk;
         }
 
-        // Clean code fences and extra text
         let cleaned = fullResponse.replace(/```json/g, '').replace(/```/g, '').trim();
         const jsonStart = cleaned.indexOf('[');
         const jsonEnd = cleaned.lastIndexOf(']');
         if (jsonStart === -1 || jsonEnd === -1) {
           storyboardContainer.innerHTML = `<pre>${DOMPurify.sanitize(cleaned)}</pre>`;
-          log("?? Could not find JSON array. Showing raw response.");
+          log("⚠️ Could not find JSON array. Showing raw response.");
           return;
         }
 
@@ -112,7 +117,7 @@ Respond strictly in JSON array format.
           panels = JSON.parse(jsonString);
         } catch (err) {
           storyboardContainer.innerHTML = `<pre>${DOMPurify.sanitize(jsonString)}</pre>`;
-          log("?? Failed to parse JSON: " + err);
+          log("⚠️ Failed to parse JSON: " + err);
           return;
         }
 
@@ -123,23 +128,26 @@ Respond strictly in JSON array format.
           panelDiv.classList.add("panel");
 
           panelDiv.innerHTML = `
-  <strong>Panel ${panel.panel_number}</strong><br>
-  <div class="panel-row"><div class="panel-label">Characters:</div><div class="panel-content">${panel.characters.join(", ")}</div></div>
-  <div class="panel-row"><div class="panel-label">Positions:</div><div class="panel-content">${panel.character_positions}</div></div>
-  <div class="panel-row"><div class="panel-label">Expressions:</div><div class="panel-content">${panel.character_expressions}</div></div>
-  <div class="panel-row"><div class="panel-label">Camera Angle:</div><div class="panel-content">${panel.camera_angle}</div></div>
-  <div class="panel-row"><div class="panel-label">Dialogue:</div><div class="panel-content">${panel.dialogue || "None"}</div></div>
-  <div class="panel-row"><div class="panel-label">Description:</div><div class="panel-content">${panel.description}</div></div>
-`;
+            <strong>Panel ${panel.panel_number}</strong><br>
+            <div class="panel-row"><div class="panel-label">Characters:</div><div class="panel-content">${panel.characters.join(", ")}</div></div>
+            <div class="panel-row"><div class="panel-label">Positions:</div><div class="panel-content">${panel.character_positions}</div></div>
+            <div class="panel-row"><div class="panel-label">Expressions:</div><div class="panel-content">${panel.character_expressions}</div></div>
+            <div class="panel-row"><div class="panel-label">Camera Angle:</div><div class="panel-content">${panel.camera_angle}</div></div>
+            <div class="panel-row"><div class="panel-label">Dialogue:</div><div class="panel-content">${panel.dialogue || "None"}</div></div>
+            <div class="panel-row"><div class="panel-label">Description:</div><div class="panel-content">${panel.description}</div></div>
+          `;
 
           storyboardContainer.appendChild(panelDiv);
         });
 
-        log("? Storyboard generation complete.");
-
+        log("✅ Storyboard generation complete.");
       } catch (err) {
-        log("? Prompt API error: " + err);
+        log("⚠️ Prompt API error: " + err);
         storyboardContainer.innerHTML = "<p>Error generating storyboard. Please try again.</p>";
+      } finally {
+        // Re-enable button after generation or error
+        generateBtn.disabled = false;
+        generateBtn.textContent = originalText;
       }
     });
   </script>

@@ -125,3 +125,10 @@ img {
 
 
 textarea { width: 100%; font-family: monospace; }
+
+
+
+.panel { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 6px; background: #f9f9f9; }
+.panel-row { display: flex; margin: 4px 0; }
+.panel-label { width: 120px; font-weight: bold; }
+.panel-content { flex: 1; text-align: left; }
