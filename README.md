@@ -2,8 +2,6 @@
 
 Flixberry Script to Storyboard AI transforms written scripts into structured, scene by scene storyboards directly in your browser. It visualizes your story flow using text based panels that represent shots, actions, and dialogue.  
 
-Whether you’re crafting comics, animations, or short films, this tool helps creators **turn words into cinematic layouts** quickly and intuitively, no drawing skills or complex software required.  
-
 ---
 
 ## ✨ Features  
@@ -55,7 +53,7 @@ Follow these steps to test Flixberry Script to Storyboard AI on your own browser
 
 This app is designed for Chrome Canary, Google’s experimental browser where the Prompt API is being tested.
 If you don’t already have it:
-👉 Download Chrome Canary
+👉 Download Chrome Canary : https://www.google.com/chrome/canary/
 
 💡 Regular Chrome or Edge will show:
 “Chrome Prompt API not available in this browser.”
@@ -121,17 +119,7 @@ If you’d like to explore or modify the source code:
 
 Visit the GitHub repo: https://github.com/flixberry/Flixberry-ScripttoStoryboardAi
 
-The repository includes:
-
-✅ Origin Trial setup for Prompt API
-
-✅ Script parsing and layout logic
-
-✅ Fallback and privacy first architecture
-
-
 ---
-
 
 
 ## 🚀 How to Run Locally  
@@ -169,7 +157,7 @@ Designing an engaging storyboard layout **without visuals** required creativity.
 Built a working prototype that instantly turns text scripts into organized panels. It’s intuitive, fast, and ready to evolve into a full AI powered storyboard tool when Chrome’s API becomes widely available.  
 
 ### What’s next  
-Future updates include **AI generated visual panels**, export options (PDF/storyboard sheets), and integration with **Flixberry CharacterView AI** for a complete creative pipeline.  
+Future updates include **AI generated visual panels**, export options (PDF/storyboard sheets).  
 
 ---
 
@@ -183,5 +171,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 - AI generated visual panels using Prompt API  
 - PDF and image export features  
-- Scene editing and rearranging tools  
-- Integration with Flixberry CharacterView AI  
+- Scene editing and rearranging tools 
