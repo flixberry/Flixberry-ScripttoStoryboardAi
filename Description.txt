@@ -1,0 +1,17 @@
+Flixberry Script to Storyboard AI is a web application that transforms written scripts and stories into structured, scene-by-scene storyboard panels directly in the browser. It allows writers, filmmakers, animators, and indie creators to visualize their stories without needing drawing skills or complex software, helping them plan scenes, pacing, dialogue, and camera angles efficiently.
+
+Features and Functionality:
+
+Converts scripts into text-based storyboard panels, including character details, positions, expressions, camera angles, dialogue, and descriptions.
+
+Fully frontend, privacy-first, running entirely in the browser with no backend or cloud storage.
+
+Scaffolded for future integration with Chrome’s Prompt API (Gemini Nano) for AI-generated visual panels.
+
+Provides instant feedback with structured panels, making it easier to organize and pre-visualize scenes.
+
+Problem Solved:
+Many writers and creators struggle to visualize their stories before production, especially without access to artists or expensive design tools. This tool bridges the gap by turning words into structured storyboard panels, allowing novel stories, short films, comics, or animation scripts to be quickly translated into visual sequences.
+
+APIs Used:
+Scaffolded for Chrome Prompt API (Gemini Nano) for future AI-assisted visual storyboard generation.
