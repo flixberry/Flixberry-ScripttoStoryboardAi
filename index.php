@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Script-to-Storyboard Assistant</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+
+    .panel { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 6px; background: #f9f9f9; }
+
+   .panel-row { display: flex; margin: 4px 0; }
+   .panel-label { width: 120px; font-weight: bold; }
+   .panel-content { flex: 1; text-align: left; }
+  </style>
+</head>
+<body>
+  <!-- Header with Logo -->
+  <header class="app-header">
+    <div class="logo-banner">
+      <img src="script to storyboard ai logo.png" alt="Flixberry CharacterView AI Logo">
+    </div>
+  </header>
+
+  <textarea style="width: 80%; height: 260px;" id="scriptInput" placeholder="Paste your script or scene description here..." rows="6"></textarea>
+  <br>
+  <button id="generateBtn">Generate Storyboard</button>
+
+  <div id="ai-log" style="padding:10px; font-size:14px; color:#333;"></div>
+  <div id="storyboardContainer" style="margin-top:20px;"></div>
+
+  <script type="module">
+    import DOMPurify from "https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs";
+
+    const logBox = document.getElementById("ai-log");
+    const storyboardContainer = document.getElementById("storyboardContainer");
+    const scriptInput = document.getElementById("scriptInput");
+    const generateBtn = document.getElementById("generateBtn");
+
+    function log(msg) {
+      logBox.innerHTML += msg + "<br>";
+      console.log(msg);
+    }
+
+    let session = null;
+
+    async function createAISession() {
+      if (!("LanguageModel" in self)) {
+        log("? Chrome Prompt API not available in this browser.");
+        return false;
+      }
+      session = await LanguageModel.create({
+        temperature: 0.7,
+        topK: 3,
+        initialPrompts: [
+          { role: "system", content: "You are an AI assistant that converts script scenes into storyboard panels in JSON format." }
+        ]
+      });
+      log("? AI session created.");
+      return true;
+    }
+
+    generateBtn.addEventListener("click", async () => {
+      const scriptText = scriptInput.value.trim();
+      if (!scriptText) {
+        alert("Please enter a script or scene description first.");
+        return;
+      }
+
+      if (!session && !(await createAISession())) return;
+
+      storyboardContainer.innerHTML = "<p>Generating storyboard panels�</p>";
+
+      try {
+        log("Sending prompt to AI...");
+        const prompt = `
+Convert the following script into a storyboard layout:
+"${scriptText}"
+
+For each panel, include:
+- panel_number
+- characters
+- character_positions
+- character_expressions
+- camera_angle
+- dialogue
+- description
+
+Respond strictly in JSON array format.
+`;
+        const stream = await session.promptStreaming(prompt);
+        let fullResponse = "";
+        storyboardContainer.innerHTML = "";
+
+        for await (const chunk of stream) {
+          fullResponse += chunk;
+        }
+
+        // Clean code fences and extra text
+        let cleaned = fullResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+        const jsonStart = cleaned.indexOf('[');
+        const jsonEnd = cleaned.lastIndexOf(']');
+        if (jsonStart === -1 || jsonEnd === -1) {
+          storyboardContainer.innerHTML = `<pre>${DOMPurify.sanitize(cleaned)}</pre>`;
+          log("?? Could not find JSON array. Showing raw response.");
+          return;
+        }
+
+        const jsonString = cleaned.slice(jsonStart, jsonEnd + 1);
+        let panels = [];
+        try {
+          panels = JSON.parse(jsonString);
+        } catch (err) {
+          storyboardContainer.innerHTML = `<pre>${DOMPurify.sanitize(jsonString)}</pre>`;
+          log("?? Failed to parse JSON: " + err);
+          return;
+        }
+
+        // Display panels
+        storyboardContainer.innerHTML = "";
+        panels.forEach(panel => {
+          const panelDiv = document.createElement("div");
+          panelDiv.classList.add("panel");
+
+          panelDiv.innerHTML = `
+  <strong>Panel ${panel.panel_number}</strong><br>
+  <div class="panel-row"><div class="panel-label">Characters:</div><div class="panel-content">${panel.characters.join(", ")}</div></div>
+  <div class="panel-row"><div class="panel-label">Positions:</div><div class="panel-content">${panel.character_positions}</div></div>
+  <div class="panel-row"><div class="panel-label">Expressions:</div><div class="panel-content">${panel.character_expressions}</div></div>
+  <div class="panel-row"><div class="panel-label">Camera Angle:</div><div class="panel-content">${panel.camera_angle}</div></div>
+  <div class="panel-row"><div class="panel-label">Dialogue:</div><div class="panel-content">${panel.dialogue || "None"}</div></div>
+  <div class="panel-row"><div class="panel-label">Description:</div><div class="panel-content">${panel.description}</div></div>
+`;
+
+          storyboardContainer.appendChild(panelDiv);
+        });
+
+        log("? Storyboard generation complete.");
+
+      } catch (err) {
+        log("? Prompt API error: " + err);
+        storyboardContainer.innerHTML = "<p>Error generating storyboard. Please try again.</p>";
+      }
+    });
+  </script>
+</body>
+</html>
