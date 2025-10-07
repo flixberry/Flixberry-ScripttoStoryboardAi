@@ -2,29 +2,122 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Script to Storyboard AI</title>
+  <title>Flixberry Script-to-Storyboard AI</title>
   <link rel="stylesheet" href="style.css">
   <style>
-  .panel { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 6px; background: #f9f9f9; }
-  .panel-row { display: flex; margin: 4px 0; }
-  .panel-label { width: 120px; font-weight: bold; }
-  .panel-content { flex: 1; text-align: left; }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #fafafa;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #ffffff;
+      border-bottom: 2px solid #eee;
+      padding: 20px;
+    }
+
+    .logo-banner img {
+      max-width: 240px;
+    }
+
+    textarea {
+      width: 80%;
+      height: 260px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 15px;
+      font-size: 14px;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #generateBtn {
+      background-color: #0078d4;
+      color: white;
+    }
+
+    #generateBtn:hover {
+      background-color: #005fa3;
+    }
+
+    #downloadBtn {
+      display: none;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #downloadBtn:hover {
+      background-color: #3b8c40;
+    }
+
+    .panel {
+      border: 1px solid #ccc;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px auto;
+      width: 80%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      text-align: left;
+    }
+
+    .panel strong {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .panel-row {
+      display: flex;
+      margin: 5px 0;
+    }
+
+    .panel-label {
+      width: 130px;
+      font-weight: bold;
+      color: #005fa3;
+    }
+
+    .panel-content {
+      flex: 1;
+    }
+
+    #ai-log {
+      font-size: 14px;
+      color: #333;
+      margin-top: 15px;
+    }
   </style>
 </head>
+
 <body>
-  <!-- Header with Logo -->
   <header class="app-header">
     <div class="logo-banner">
-      <img src="script to storyboard ai logo.png" alt="Flixberry CharacterView AI Logo">
+      <img src="script to storyboard ai logo.png" alt="Flixberry Script-to-Storyboard AI Logo">
     </div>
   </header>
 
-  <textarea style="width: 80%; height: 260px;" id="scriptInput" placeholder="Paste your script or scene description here..." rows="6"></textarea>
+  <textarea id="scriptInput" placeholder="Paste your script or scene description here..."></textarea>
   <br>
   <button id="generateBtn">Generate Storyboard</button>
+  <button id="downloadBtn">Download PDF</button>
 
-  <div id="ai-log" style="padding:10px; font-size:14px; color:#333;"></div>
-  <div id="storyboardContainer" style="margin-top:20px;"></div>
+  <div id="ai-log"></div>
+  <div id="storyboardContainer" style="margin-top: 20px;"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <script type="module">
     import DOMPurify from "https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs";
@@ -33,6 +126,7 @@
     const storyboardContainer = document.getElementById("storyboardContainer");
     const scriptInput = document.getElementById("scriptInput");
     const generateBtn = document.getElementById("generateBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
 
     function log(msg) {
       logBox.innerHTML += msg + "<br>";
@@ -40,10 +134,11 @@
     }
 
     let session = null;
+    let panelsData = [];
 
     async function createAISession() {
       if (!("LanguageModel" in self)) {
-        log("⚠️ Chrome Prompt API not available in this browser.");
+        log("?? Chrome Prompt API not available in this browser.");
         return false;
       }
       session = await LanguageModel.create({
@@ -53,7 +148,7 @@
           { role: "system", content: "You are an AI assistant that converts script scenes into storyboard panels in JSON format." }
         ]
       });
-      log("✅ AI session created.");
+      log("? AI session created.");
       return true;
     }
 
@@ -64,10 +159,10 @@
         return;
       }
 
-      // Disable button and show loading text
       generateBtn.disabled = true;
       const originalText = generateBtn.textContent;
       generateBtn.textContent = "Generating Storyboard, please wait...";
+      downloadBtn.style.display = "none";
 
       if (!session && !(await createAISession())) {
         generateBtn.disabled = false;
@@ -75,7 +170,7 @@
         return;
       }
 
-      storyboardContainer.innerHTML = "<p>Generating storyboard panels…</p>";
+      storyboardContainer.innerHTML = "<p>Generating storyboard panels�</p>";
 
       try {
         log("Sending prompt to AI...");
@@ -107,23 +202,21 @@ Respond strictly in JSON array format.
         const jsonEnd = cleaned.lastIndexOf(']');
         if (jsonStart === -1 || jsonEnd === -1) {
           storyboardContainer.innerHTML = `<pre>${DOMPurify.sanitize(cleaned)}</pre>`;
-          log("⚠️ Could not find JSON array. Showing raw response.");
+          log("?? Could not find JSON array. Showing raw response.");
           return;
         }
 
         const jsonString = cleaned.slice(jsonStart, jsonEnd + 1);
-        let panels = [];
         try {
-          panels = JSON.parse(jsonString);
+          panelsData = JSON.parse(jsonString);
         } catch (err) {
           storyboardContainer.innerHTML = `<pre>${DOMPurify.sanitize(jsonString)}</pre>`;
-          log("⚠️ Failed to parse JSON: " + err);
+          log("?? Failed to parse JSON: " + err);
           return;
         }
 
-        // Display panels
         storyboardContainer.innerHTML = "";
-        panels.forEach(panel => {
+        panelsData.forEach(panel => {
           const panelDiv = document.createElement("div");
           panelDiv.classList.add("panel");
 
@@ -136,19 +229,89 @@ Respond strictly in JSON array format.
             <div class="panel-row"><div class="panel-label">Dialogue:</div><div class="panel-content">${panel.dialogue || "None"}</div></div>
             <div class="panel-row"><div class="panel-label">Description:</div><div class="panel-content">${panel.description}</div></div>
           `;
-
           storyboardContainer.appendChild(panelDiv);
         });
 
-        log("✅ Storyboard generation complete.");
+        log("? Storyboard generation complete.");
+        downloadBtn.style.display = "inline-block";
       } catch (err) {
-        log("⚠️ Prompt API error: " + err);
+        log("?? Prompt API error: " + err);
         storyboardContainer.innerHTML = "<p>Error generating storyboard. Please try again.</p>";
       } finally {
-        // Re-enable button after generation or error
         generateBtn.disabled = false;
         generateBtn.textContent = originalText;
       }
+    });
+
+    // --- PDF Download Functionality (Professional Design) ---
+    downloadBtn.addEventListener("click", () => {
+      if (!panelsData.length) return alert("No storyboard panels to download.");
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+      // Header
+      doc.setFillColor(240, 240, 240);
+      doc.rect(0, 0, 210, 20, "F");
+      doc.setTextColor(40, 40, 40);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("Flixberry Script to Storyboard AI", 10, 13);
+      doc.setFontSize(10);
+      doc.text("Visual Scene Breakdown", 160, 13);
+
+      let y = 30;
+
+      panelsData.forEach((panel, index) => {
+        // Panel box
+        doc.setFillColor(250, 250, 255);
+        doc.setDrawColor(180, 180, 200);
+        doc.roundedRect(10, y, 190, 60, 3, 3, "FD");
+
+        // Title
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.setTextColor(33, 33, 33);
+        doc.text(`Panel ${panel.panel_number}`, 15, y + 8);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(60, 60, 60);
+
+        let textY = y + 16;
+        const lines = [
+          `Characters: ${panel.characters.join(", ")}`,
+          `Positions: ${panel.character_positions}`,
+          `Expressions: ${panel.character_expressions}`,
+          `Camera Angle: ${panel.camera_angle}`,
+          `Dialogue: ${panel.dialogue || "None"}`,
+          `Description: ${panel.description}`,
+        ];
+
+        lines.forEach(line => {
+          const split = doc.splitTextToSize(line, 180);
+          doc.text(split, 15, textY);
+          textY += split.length * 5;
+        });
+
+        y = textY + 6;
+
+        // New page if needed
+        if (y > 260 && index !== panelsData.length - 1) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+
+      // Footer
+      doc.setDrawColor(200, 200, 200);
+      doc.line(10, 285, 200, 285);
+      doc.setFontSize(9);
+      doc.setTextColor(100, 100, 100);
+      doc.text("Generated by Flixberry Script to Storyboard AI", 10, 292);
+      doc.text("Flixberry", 165, 292);
+
+      doc.save("Flixberry_Storyboard.pdf");
     });
   </script>
 </body>
