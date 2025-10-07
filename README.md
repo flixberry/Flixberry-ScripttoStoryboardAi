@@ -1,6 +1,6 @@
 # 🎬 Flixberry Script to Storyboard AI  
 
-Flixberry Script to Storyboard AI transforms written scripts into structured, scene-by-scene storyboards — directly in your browser.  
+Flixberry Script to Storyboard AI transforms written scripts into structured, scene-by-scene storyboards, directly in your browser.  
 It visualizes your story flow using **text based panels** that represent shots, actions, and dialogue.  
 
 ---
@@ -10,14 +10,14 @@ It visualizes your story flow using **text based panels** that represent shots, 
 - 🧾 Converts scripts into text based storyboard panels  
 - 🛡️ Privacy-first: runs locally, no backend or data sharing  
 - 🎬 Designed for storytellers, screenwriters, and indie creators  
-- ⚡ Instant browser based experience — no setup or install needed  
+- ⚡ Instant browser based experience
 
 ---
 
 ## 🧩 Problem Solved  
 
 Turning written stories into visual structure can be challenging without artists or expensive tools.  
-Flixberry Script to Storyboard AI bridges that gap by generating **panel-style breakdowns** from your script, helping you visualize pacing, dialogue, and flow even before any art is created.  
+Flixberry Script to Storyboard AI bridges that gap by generating **panel style breakdowns** from your script, helping you visualize pacing, dialogue, and flow even before any art is created.  
 
 ---
 
@@ -25,7 +25,7 @@ Flixberry Script to Storyboard AI bridges that gap by generating **panel-style b
 
 - **Languages:** HTML, CSS, JavaScript  
 - **Platform:** Chrome Canary (Prompt API preview)  
-- **Architecture:** Frontend-only, privacy-first  
+- **Architecture:** Frontend only, privacy-first  
 - **APIs:** Chrome’s Prompt API  
 - **Hosting:** [flixberry.com/scripttostoryboardai](https://www.flixberry.com/scripttostoryboardai)  
 
@@ -45,12 +45,12 @@ Once Chrome exposes the API publicly, Flixberry Script to Storyboard AI will aut
 Follow these steps to test Flixberry Script to Storyboard AI in your browser:
 
 ### 1. 🧭 Use Chrome Canary (v139–144)  
-This app is designed for Chrome Canary — Google’s experimental browser where the Prompt API is being tested.  
+This app is designed for Chrome Canary, Google’s experimental browser where the Prompt API is being tested.  
 👉 [Download Chrome Canary](https://www.google.com/chrome/canary/)  
 
 💡 Regular Chrome or Edge will show:  
 > “Chrome Prompt API not available in this browser.”  
-That’s normal — only Canary supports it for now.
+That’s normal, only Canary supports it for now.
 
 ---
 
@@ -73,7 +73,7 @@ These flags unlock access to Chrome’s early Prompt API for AI-assisted feature
 
 👉 [https://flixberry.com/scripttostoryboardai](https://flixberry.com/scripttostoryboardai)  
 
-No installation — runs instantly in your browser.  
+No installation — runs instantly in your Chrome canary browser.  
 
 ---
 
@@ -126,14 +126,14 @@ Want to explore or modify the source?
 
 Watch the app in action:  
 **[YouTube Demo Link](https://youtu.be/Sg6HA_n8w3U?si=x5U99SDc1Lfz6hF4)**  
-*(Under 3 minutes — live text storyboard generation demo)*  
+*(Under 3 minutes live text storyboard generation demo)*  
 
 ---
 
 ## 📚 Project Story  
 
 ### 💡 Inspiration  
-This project was inspired by the challenge of turning imagination into structure, the bridge between writing and visual storytelling. Many writers and filmmakers struggle to picture how their words translate to the screen or page. We wanted to make that transformation simple, fast, and accessible, especially for solo creators and small teams. 
+This project was inspired by the challenge of turning imagination into structure, the bridge between writing and visual storytelling. Many writers and filmmakers struggle to picture how their words translate to the screen or page. We wanted to make that transformation simple, fast, and accessible, especially for solo creators and small teams.
 
 ---
 
