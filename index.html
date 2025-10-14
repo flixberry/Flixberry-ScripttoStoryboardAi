@@ -148,7 +148,7 @@
           { role: "system", content: "You are an AI assistant that converts script scenes into storyboard panels in JSON format." }
         ]
       });
-      log("AI session created.");
+      log("? AI session created.");
       return true;
     }
 
@@ -232,7 +232,7 @@ Respond strictly in JSON array format.
           storyboardContainer.appendChild(panelDiv);
         });
 
-        log("Storyboard generation complete.");
+        log("? Storyboard generation complete.");
         downloadBtn.style.display = "inline-block";
       } catch (err) {
         log("?? Prompt API error: " + err);
