@@ -197,23 +197,41 @@ Respond strictly in JSON array format.
           fullResponse += chunk;
         }
 
-        let cleaned = fullResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-        const jsonStart = cleaned.indexOf('[');
-        const jsonEnd = cleaned.lastIndexOf(']');
-        if (jsonStart === -1 || jsonEnd === -1) {
-          storyboardContainer.innerHTML = `<pre>${DOMPurify.sanitize(cleaned)}</pre>`;
-          log("?? Could not find JSON array. Showing raw response.");
-          return;
-        }
+        let cleaned = fullResponse
+  .replace(/```json/g, "")
+  .replace(/```/g, "")
+  .replace(/[^\x20-\x7E\n\r\t]/g, "") // remove weird/invisible characters
+  .trim();
 
-        const jsonString = cleaned.slice(jsonStart, jsonEnd + 1);
-        try {
-          panelsData = JSON.parse(jsonString);
-        } catch (err) {
-          storyboardContainer.innerHTML = `<pre>${DOMPurify.sanitize(jsonString)}</pre>`;
-          log("?? Failed to parse JSON: " + err);
-          return;
-        }
+const jsonStart = cleaned.indexOf("[");
+const jsonEnd = cleaned.lastIndexOf("]");
+if (jsonStart === -1 || jsonEnd === -1) {
+  storyboardContainer.innerHTML = `<pre>${DOMPurify.sanitize(cleaned)}</pre>`;
+  log("⚠️ Could not find JSON array. Showing raw response instead.");
+  return;
+}
+
+const jsonString = cleaned.slice(jsonStart, jsonEnd + 1);
+
+try {
+  panelsData = JSON.parse(jsonString);
+} catch (err) {
+  log("⚠️ JSON parse failed, trying cleanup...");
+  // Try cleaning up JSON and parse again
+  const fixed = jsonString
+    .replace(/\n/g, " ")
+    .replace(/,\s*([\]}])/g, "$1") // remove trailing commas
+    .replace(/\s+/g, " ")
+    .trim();
+  try {
+    panelsData = JSON.parse(fixed);
+  } catch (e2) {
+    storyboardContainer.innerHTML = `<p>⚠️ Sorry, the storyboard couldn’t be generated completely due to response length. Try shortening your script.</p>`;
+    console.error("Final JSON parse error:", e2);
+    return;
+  }
+}
+
 
         storyboardContainer.innerHTML = "";
         panelsData.forEach(panel => {
